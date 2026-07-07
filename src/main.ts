@@ -125,7 +125,11 @@ async function main(sftp: Client){
 				}
 			})))
 		}
-		await Promise.allSettled(promises)
+		const results = await Promise.allSettled(promises)
+		const failures = results.filter((r): r is PromiseRejectedResult => r.status === "rejected")
+		if (failures.length > 0) {
+			throw new Error(failures.map(f => String(f.reason)).join("\n"))
+		}
 		debug("Upload process complete.")
 		await sftp.end()
 		debug("Session ended.")
