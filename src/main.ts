@@ -129,10 +129,12 @@ async function main(sftp: Client){
 			})))
 		}
 
+		debug("Done iterating over dirs")
+
 		debug(`Found " ${promises.length} records to process...`)
 
 		await Promise.all(promises).then((values) => { debug(`Value: {$values}`); })
-		debug("Upload process complete.")
+		debug("Upload process completed.")
 		await sftp.end()
 		debug("Session ended.")
 
