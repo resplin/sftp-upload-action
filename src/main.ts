@@ -107,8 +107,10 @@ async function main(sftp: Client){
 		}
 
 		debug("Preparing upload...")
+
 		for(const upload of uploads) {
 			debug(`Processing ${upload.from} to ${upload.to}`)
+
 			promises.push(limit(() => sftp.uploadDir(upload.from, upload.to, {
 				filter: file => {
 					if(is_uploadable(file, ignored)){
@@ -120,12 +122,16 @@ async function main(sftp: Client){
 							return true
 						}
 					}
+
 					debug(`Skipping ${file}`)
 					return false
 				}
 			})))
 		}
-		await Promise.all(promises)
+
+		debug(`Found " ${promises.length} records to process...`)
+
+		await Promise.all(promises).then((values) => { debug(`Value: {$values}`); })
 		debug("Upload process complete.")
 		await sftp.end()
 		debug("Session ended.")
